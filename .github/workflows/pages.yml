@@ -25,11 +25,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # enablement:true turns Pages on via the API, so this works on a repo
-      # where Pages has never been configured by hand.
+      # Note: enablement:true is deliberately NOT set. The Actions token cannot
+      # create a Pages site (needs repo-admin), so it only hard-fails the run.
+      # Pages is switched on once in Settings; after that this deploys on push.
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       # Publish only what the app needs. The README, submission pack and test
       # harness stay in the repo for anyone reading it, but are not served.
