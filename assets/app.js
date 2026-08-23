@@ -107,7 +107,8 @@ function viewLogin () {
   const demos = [
     ['100200300400', t('demoBlocked')],
     ['100200300401', t('demoReady')],
-    ['100200300402', t('demoRejected')]
+    ['100200300402', t('demoRejected')],
+    ['100200300403', t('demoContract')]
   ];
   return `
     <h1>${esc(t('loginTitle'))}</h1>
@@ -468,11 +469,20 @@ function viewHelp () {
 }
 
 function viewDraft () {
-  const { title, intro, text } = state.param;
+  const { titleKey, introKey, draftLang = state.lang } = state.param;
+  const m = member();
+  const text = state.param.kind === 'employer'
+    ? draftEmployerRequest(m, state.param.findingId, draftLang)
+    : draftGrievance(m, myClaims().find(x => x.id === state.param.claimId), charterClock(myClaims().find(x => x.id === state.param.claimId)), draftLang);
   return `
     <button class="btn ghost" data-act="back">← ${esc(t('back'))}</button>
-    <h1>${esc(title)}</h1>
-    <p class="lede">${esc(intro)}</p>
+    <h1>${esc(t(titleKey))}</h1>
+    <p class="lede">${esc(t(introKey))}</p>
+    <div class="btnrow" role="group" aria-label="${esc(t('draftLanguage'))}" style="margin:12px 0">
+      <span class="tiny" style="align-self:center">${esc(t('draftLanguage'))}</span>
+      <button class="btn secondary sm ${draftLang === 'hi' ? 'on' : ''}" data-act="draftlang" data-lang="hi" aria-pressed="${draftLang === 'hi'}">${esc(t('draftLanguageHi'))}</button>
+      <button class="btn secondary sm ${draftLang === 'en' ? 'on' : ''}" data-act="draftlang" data-lang="en" aria-pressed="${draftLang === 'en'}">${esc(t('draftLanguageEn'))}</button>
+    </div>
     <textarea id="drafttext" readonly>${esc(text)}</textarea>
     <button class="btn" data-act="copy">${esc(t('copyDraft'))}</button>
   `;
@@ -573,14 +583,22 @@ document.addEventListener('click', ev => {
   }
 
   if (act === 'draft') {
-    const text = draftEmployerRequest(member(), el.dataset.id);
-    return go('draft', { title: t('rule.' + el.dataset.id), intro: t('draftIntro'), text, from: state.route });
+    return go('draft', {
+      kind: 'employer', findingId: el.dataset.id, draftLang: state.lang,
+      titleKey: 'rule.' + el.dataset.id, introKey: 'draftIntro', from: state.route
+    });
   }
 
   if (act === 'grievance') {
-    const c = myClaims().find(x => x.id === el.dataset.claim);
-    const text = draftGrievance(member(), c, charterClock(c));
-    return go('draft', { title: t('escalateHead'), intro: t('grievanceIntro'), text, from: state.route });
+    return go('draft', {
+      kind: 'grievance', claimId: el.dataset.claim, draftLang: state.lang,
+      titleKey: 'escalateHead', introKey: 'grievanceIntro', from: state.route
+    });
+  }
+
+  if (act === 'draftlang') {
+    state.param = { ...state.param, draftLang: el.dataset.lang };
+    return render();
   }
 
   if (act === 'copy') {

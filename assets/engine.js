@@ -202,9 +202,25 @@ export function charterClock (claim) {
    Draft generators. Every dead end in this product ends in a document the
    member can actually send, rather than advice to "contact your employer".
    ------------------------------------------------------------------------- */
-export function draftEmployerRequest (member, findingId) {
+export function draftEmployerRequest (member, findingId, lang = 'en') {
   const e = member.employment;
   if (findingId === 'EXIT_DATE_MISSING') {
+    if (lang === 'hi') {
+      return `विषय: निकास तिथि दर्ज करने का अनुरोध — UAN ${member.uan}
+
+प्रिय HR टीम,
+
+मैंने ${e.lastEmployer} में ${e.doj} से अपनी अंतिम कार्य तिथि ${e.exitDate} तक काम किया।
+
+मेरे UAN ${member.uan} के लिए EPFO नियोक्ता पोर्टल में मेरी निकास तिथि अभी तक दर्ज नहीं हुई है। इस कारण मैं अपना अंतिम निपटान दावा नहीं भर पा रहा/रही हूँ, और अभी भरने पर दावा रद्द हो जाएगा।
+
+कृपया जल्द से जल्द "Cessation (Short Service)" कारण के साथ मेरी निकास तिथि दर्ज करें। हो जाने पर कृपया यहाँ पुष्टि करें ताकि मैं आगे बढ़ सकूँ।
+
+आपकी सहायता के लिए धन्यवाद।
+
+${member.profile.nameOnUan}
+UAN: ${member.uan}`;
+    }
     return `Subject: Request to mark Date of Exit — UAN ${member.uan}
 
 Dear HR Team,
@@ -222,6 +238,22 @@ UAN: ${member.uan}`;
   }
 
   if (findingId === 'CONTRIBUTION_GAP') {
+    if (lang === 'hi') {
+      return `विषय: PF अंशदान जमा नहीं हुआ — UAN ${member.uan}
+
+प्रिय HR टीम,
+
+मेरी EPF पासबुक में इन वेतन महीनों के लिए कोई अंशदान प्राप्त नहीं दिख रहा है: ${member.passbook.missingMonths.join(', ')}।
+
+इन महीनों की मेरी वेतन पर्चियों में कर्मचारी अंशदान कटना दिखता है। कृपया ECR संदर्भ के साथ बताएं कि ये अंशदान मेरे UAN ${member.uan} में कब जमा किए जाएंगे।
+
+यदि 15 दिनों में कोई उत्तर नहीं मिलता, तो मुझे EPFO क्षेत्रीय कार्यालय में "Non-receipt of contribution" श्रेणी के अंतर्गत शिकायत दर्ज करनी पड़ेगी।
+
+धन्यवाद,
+
+${member.profile.nameOnUan}
+UAN: ${member.uan}`;
+    }
     return `Subject: PF contribution not deposited — UAN ${member.uan}
 
 Dear HR Team,
@@ -241,7 +273,24 @@ UAN: ${member.uan}`;
   return '';
 }
 
-export function draftGrievance (member, claim, clock) {
+export function draftGrievance (member, claim, clock, lang = 'en') {
+  if (lang === 'hi') {
+    return `शिकायत श्रेणी: दावे का निपटान न होना
+UAN: ${member.uan}
+दावा ID: ${claim.id}
+PF कार्यालय: UAN रिकॉर्ड के अनुसार
+दावा भरने की तिथि: ${claim.filedOn}
+बीते दिन: ${clock.elapsed}
+
+विवरण:
+मैंने ${claim.id} दावा ${claim.filedOn} को भरा था। आज तक निपटान हुए बिना ${clock.elapsed} दिन बीत चुके हैं।
+
+EPFO का नागरिक चार्टर प्राप्ति के ${clock.limit} दिनों के भीतर पूर्ण दावे के निपटान का वचन देता है। मेरे सभी KYC विवरण — आधार, बैंक खाता और PAN — जुड़े और सत्यापित हैं, और मुझे कोई कमी ज्ञापन नहीं मिला है।
+
+कृपया मेरा दावा निपटाएं या किसी विशिष्ट कमी की लिखित सूचना दें, ताकि मैं उसे ठीक कर सकूँ।
+
+मांगी गई राहत: दावे का निपटान या सटीक कमी का लिखित विवरण।`;
+  }
   return `Grievance category: Non-settlement of claim
 UAN: ${member.uan}
 Claim ID: ${claim.id}

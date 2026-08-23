@@ -38,6 +38,7 @@ export const STRINGS = {
     demoBlocked: 'Would be rejected today · 3 blockers',
     demoReady: 'Clean record · ready to file',
     demoRejected: 'Already rejected once · needs recovery',
+    demoContract: 'Contract worker · old PF accounts need transfer',
     demoOtp: 'OTP for every demo account: 123456',
     errUan: 'That UAN is not in the demo data. Use one of the demo logins below.',
     errOtp: 'Incorrect OTP. For this prototype it is 123456.',
@@ -77,14 +78,21 @@ export const STRINGS = {
     copyDraft: 'Copy',
     copied: 'Copied',
     draftIntro: 'Send this to your employer. It names the exact problem, so it is harder to ignore.',
+    draftLanguage: 'Draft language',
+    draftLanguageHi: 'हिंदी',
+    draftLanguageEn: 'English',
     allClear: 'Nothing is blocking you. You can file.',
 
     detail: {
       nameMismatch:  (uan, aadhaar) => `Your UAN says "${uan}". Your Aadhaar says "${aadhaar}".`,
       dobMismatch:   (uan, aadhaar) => `Your UAN shows ${uan}. Your Aadhaar shows ${aadhaar}.`,
+      parentNameMismatch: (uan, aadhaar) => `Your UAN lists "${uan}" as parent name. Your Aadhaar lists "${aadhaar}".`,
+      genderMismatch: (uan, aadhaar) => `Your UAN says ${uan}. Your Aadhaar says ${aadhaar}.`,
       duplicateUan:  (n, list) => `${n} UANs found: ${list}.`,
       untransferred: n => `${n} old PF account${n === 1 ? '' : 's'} still sitting with a previous employer.`,
-      gap:           months => `No deposit received for: ${months}.`
+      gap:           months => `No deposit received for: ${months}.`,
+      pendingBankKyc: establishment => `A bank-KYC change is still waiting for approval from ${establishment}.`,
+      kycUanConflict: uans => `The same bank KYC is also linked to UAN: ${uans}, with conflicting details.`
     },
 
     /* --- rule names --- */
@@ -100,7 +108,13 @@ export const STRINGS = {
       SERVICE_NOT_TRANSFERRED: 'An old PF account was never transferred',
       PAN_MISSING:           'Your PAN is missing — you will lose extra tax',
       CONTRIBUTION_GAP:      'Your employer skipped some months',
-      NOMINEE_MISSING:       'You have not filed a nomination'
+      NOMINEE_MISSING:       'You have not filed a nomination',
+      PARENT_NAME_MISMATCH:  'Your parent’s name does not match Aadhaar',
+      GENDER_MISMATCH:       'Your gender does not match Aadhaar',
+      DATE_OF_JOINING_MISSING: 'Your date of joining is missing from EPFO records',
+      EXIT_REASON_INVALID:   'Your reason for leaving is missing or wrong',
+      BANK_KYC_CHANGE_PENDING: 'A bank-KYC change is still pending',
+      KYC_CONFLICT_ACROSS_UANS: 'Your bank KYC conflicts across UANs'
     },
 
     /* --- money --- */
@@ -233,7 +247,7 @@ export const STRINGS = {
       'There is no backend and no connection of any kind to EPFO. Logging in checks a number against a local file.',
       'Nothing you type leaves your device. Your progress is saved in your own browser only.',
       'The Table D pension figure and advance limits are simplified approximations, not a substitute for EPFO\'s own calculation.',
-      'The app is bilingual, but the generated letters and grievances are drafted in English only, because that is what employer HR desks and the grievance portal accept most reliably. Regional-language drafts are the obvious next step.'
+      'Letters and grievances are available in both Hindi and English. You can switch a draft to English before copying it, since many HR desks and grievance portals prefer it.'
     ],
     scaleHead: 'How this would work for real',
     scaleBody: [
@@ -277,6 +291,7 @@ export const STRINGS = {
     demoBlocked: 'आज भरा तो रद्द होगा · 3 रुकावटें',
     demoReady: 'रिकॉर्ड साफ़ · भरने के लिए तैयार',
     demoRejected: 'एक बार रद्द हो चुका · सुधार चाहिए',
+    demoContract: 'कॉन्ट्रैक्ट कर्मचारी · पुराने PF खाते ट्रांसफ़र करने हैं',
     demoOtp: 'हर डेमो खाते का OTP: 123456',
     errUan: 'यह UAN डेमो डेटा में नहीं है। नीचे दिए डेमो लॉगिन में से चुनें।',
     errOtp: 'OTP ग़लत है। इस प्रोटोटाइप में यह 123456 है।',
@@ -314,14 +329,21 @@ export const STRINGS = {
     copyDraft: 'कॉपी करें',
     copied: 'कॉपी हो गया',
     draftIntro: 'यह अपने नियोक्ता को भेजें। इसमें समस्या साफ़ लिखी है, इसलिए इसे टालना मुश्किल होगा।',
+    draftLanguage: 'मसौदे की भाषा',
+    draftLanguageHi: 'हिंदी',
+    draftLanguageEn: 'English',
     allClear: 'कोई रुकावट नहीं है। आप दावा भर सकते हैं।',
 
     detail: {
       nameMismatch:  (uan, aadhaar) => `आपके UAN पर "${uan}" लिखा है। आपके आधार पर "${aadhaar}" लिखा है।`,
       dobMismatch:   (uan, aadhaar) => `आपके UAN पर ${uan} है। आपके आधार पर ${aadhaar} है।`,
+      parentNameMismatch: (uan, aadhaar) => `आपके UAN पर माता/पिता का नाम "${uan}" है। आपके आधार पर "${aadhaar}" है।`,
+      genderMismatch: (uan, aadhaar) => `आपके UAN पर ${uan} है। आपके आधार पर ${aadhaar} है।`,
       duplicateUan:  (n, list) => `${n} UAN मिले: ${list}।`,
       untransferred: n => `${n} पुराना PF खाता अब भी पिछले नियोक्ता के पास है।`,
-      gap:           months => `इन महीनों की जमा नहीं मिली: ${months}।`
+      gap:           months => `इन महीनों की जमा नहीं मिली: ${months}।`,
+      pendingBankKyc: establishment => `बैंक KYC में बदलाव अभी भी ${establishment} की स्वीकृति का इंतज़ार कर रहा है।`,
+      kycUanConflict: uans => `यही बैंक KYC अलग विवरण वाले UAN ${uans} से भी जुड़ा है।`
     },
 
     rule: {
@@ -336,7 +358,13 @@ export const STRINGS = {
       SERVICE_NOT_TRANSFERRED: 'पुराना PF खाता कभी ट्रांसफ़र नहीं हुआ',
       PAN_MISSING:           'PAN नहीं जुड़ा — ज़्यादा टैक्स कटेगा',
       CONTRIBUTION_GAP:      'नियोक्ता ने कुछ महीने जमा नहीं किए',
-      NOMINEE_MISSING:       'आपने नामांकन दर्ज नहीं किया'
+      NOMINEE_MISSING:       'आपने नामांकन दर्ज नहीं किया',
+      PARENT_NAME_MISMATCH:  'माता/पिता का नाम आधार से मेल नहीं खाता',
+      GENDER_MISMATCH:       'आपका लिंग आधार से मेल नहीं खाता',
+      DATE_OF_JOINING_MISSING: 'EPFO रिकॉर्ड में आपकी जॉइनिंग तिथि नहीं है',
+      EXIT_REASON_INVALID:   'नौकरी छोड़ने का कारण दर्ज नहीं है या ग़लत है',
+      BANK_KYC_CHANGE_PENDING: 'बैंक KYC में बदलाव अभी भी लंबित है',
+      KYC_CONFLICT_ACROSS_UANS: 'आपका बैंक KYC अलग-अलग UAN में टकरा रहा है'
     },
 
     moneyHead: 'आपका पैसा, सीधी भाषा में',
@@ -463,7 +491,7 @@ export const STRINGS = {
       'कोई बैकएंड नहीं है और EPFO से किसी तरह का कोई संपर्क नहीं है। लॉगिन सिर्फ़ एक स्थानीय फ़ाइल से नंबर मिलाता है।',
       'आपका टाइप किया कुछ भी आपके फ़ोन से बाहर नहीं जाता। प्रगति सिर्फ़ आपके ब्राउज़र में सहेजी जाती है।',
       'टेबल D पेंशन आँकड़ा और अग्रिम सीमाएँ सरलीकृत अनुमान हैं, EPFO की अपनी गणना का विकल्प नहीं।',
-      'ऐप दो भाषाओं में है, पर तैयार किए गए पत्र और शिकायतें सिर्फ़ अंग्रेज़ी में बनती हैं, क्योंकि HR विभाग और शिकायत पोर्टल उसे सबसे भरोसे से स्वीकार करते हैं। क्षेत्रीय भाषाओं में मसौदे अगला क़दम हैं।'
+      'पत्र और शिकायतें हिंदी और अंग्रेज़ी, दोनों में उपलब्ध हैं। कॉपी करने से पहले मसौदे को अंग्रेज़ी में बदला जा सकता है, क्योंकि कई HR विभाग और शिकायत पोर्टल उसे पसंद करते हैं।'
     ],
     scaleHead: 'असल में यह कैसे चलेगा',
     scaleBody: [

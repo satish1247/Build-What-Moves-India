@@ -225,6 +225,112 @@ export const REJECTION_RULES = [
       ],
       note: 'Does not block a withdrawal, but without it your family cannot claim EPF, EPS or the EDLI insurance benefit if something happens to you.'
     }
+  },
+  {
+    id: 'PARENT_NAME_MISMATCH',
+    severity: 'blocker',
+    owner: 'member',
+    etaDays: 12,
+    epfoRemark: 'The member details do not match with establishment records.',
+    test: m => norm(m.profile.parentNameOnUan) !== norm(m.kyc.aadhaar.parentName),
+    detail: m => ['detail.parentNameMismatch', m.profile.parentNameOnUan, m.kyc.aadhaar.parentName],
+    fix: {
+      steps: [
+        'Open the Member portal and choose Joint Declaration (JD).',
+        'Select Parent Name / Relationship and enter the value that matches your Aadhaar.',
+        'Upload the prescribed supporting document and submit the request.',
+        'Wait for the correction to show in your Member Profile before filing again.'
+      ],
+      note: 'EPFO specifically warns that a wrong father’s or husband’s name can lead to rejection even when your name and date of birth are correct.'
+    }
+  },
+  {
+    id: 'GENDER_MISMATCH',
+    severity: 'blocker',
+    owner: 'member',
+    etaDays: 12,
+    epfoRemark: 'The member details do not match with establishment records.',
+    test: m => m.profile.genderOnUan !== m.kyc.aadhaar.gender,
+    detail: m => ['detail.genderMismatch', m.profile.genderOnUan, m.kyc.aadhaar.gender],
+    fix: {
+      steps: [
+        'Open the Member portal and choose Joint Declaration (JD).',
+        'Select Gender as the field to correct and enter the value on Aadhaar.',
+        'Upload the prescribed identity proof and submit the request.',
+        'Confirm the corrected value in your Member Profile before re-filing the claim.'
+      ],
+      note: 'Gender is one of the demographic fields EPFO validates against Aadhaar when a UAN is created or corrected.'
+    }
+  },
+  {
+    id: 'DATE_OF_JOINING_MISSING',
+    severity: 'blocker',
+    owner: 'employer',
+    etaDays: 15,
+    epfoRemark: 'Mandatory information like Date of joining is not available.',
+    appliesTo: ['FORM_19', 'FORM_10C'],
+    test: m => m.employment.status === 'exited' && !m.employment.dojMarked,
+    fix: {
+      steps: [
+        'Ask your former employer to verify the Date of Joining against its payroll and appointment records.',
+        'The employer must request the correction through the concerned PF Office.',
+        'Check that the date appears in your UAN service history before filing the final claim.'
+      ],
+      note: 'EPFO’s claim-settlement procedure treats a missing Date of Joining as mandatory information missing from the claim record.'
+    }
+  },
+  {
+    id: 'EXIT_REASON_INVALID',
+    severity: 'blocker',
+    owner: 'employer',
+    etaDays: 15,
+    epfoRemark: 'Reason of Leaving is not available. Please get the same updated through your employer.',
+    appliesTo: ['FORM_19', 'FORM_10C'],
+    test: m => m.employment.status === 'exited' && !m.employment.exitReasonValid,
+    fix: {
+      steps: [
+        'Ask your former employer to check the reason recorded with your Date of Exit.',
+        'Have the employer request a correction through the concerned PF Office if it is blank or wrong.',
+        'Verify both the exit date and reason in the service history before filing again.'
+      ],
+      note: 'EPFO’s member FAQ confirms that a wrong exit reason can cause an error while filing an online claim.'
+    }
+  },
+  {
+    id: 'BANK_KYC_CHANGE_PENDING',
+    severity: 'blocker',
+    owner: 'epfo',
+    etaDays: 10,
+    epfoRemark: 'KYC change in Bank Account Number submitted by employer is pending with establishment for approval. You will be able to submit the claim once this KYC is approved/rejected.',
+    test: m => m.kyc.bank.pendingChange,
+    detail: m => ['detail.pendingBankKyc', m.kyc.bank.pendingWith || 'an establishment'],
+    fix: {
+      steps: [
+        'Do not submit a fresh bank change while this request is pending.',
+        'Take a screenshot of the message and contact the concerned EPFO field office with your UAN and bank proof.',
+        'Ask the office to identify the establishment holding the pending approval and have it approved or rejected.',
+        'File the claim only after the pending KYC item no longer appears.'
+      ],
+      note: 'This can be an orphaned request from an establishment you never worked for; EPFO says to approach the concerned field office.'
+    }
+  },
+  {
+    id: 'KYC_CONFLICT_ACROSS_UANS',
+    severity: 'blocker',
+    owner: 'member',
+    etaDays: 20,
+    epfoRemark: 'Same KYC, especially the bank account, is seeded against two or more UAN having different demographic details.',
+    test: m => m.kyc.bank.conflictingUanKyc,
+    detail: m => ['detail.kycUanConflict', m.kyc.bank.conflictingUans.join(', ')],
+    fix: {
+      steps: [
+        'Identify every UAN linked to the bank account from the Member portal or your passbooks.',
+        'Correct name, date of birth and gender on the older UAN so they match Aadhaar.',
+        'Link Aadhaar to each corrected UAN, then file Form 13 to transfer the old account to the active UAN.',
+        'Retry only after the portal accepts the same Aadhaar/KYC on the linked UANs.'
+      ],
+      note: 'This is more specific than merely having two UANs: the portal blocks an online claim when the shared KYC carries conflicting demographic records.'
+    }
   }
 ];
 
@@ -248,7 +354,7 @@ export const CLAIM_STAGES = [
   { id: 'settled',   dayOffset: 12 }
 ];
 
-/* ---------- Three synthetic members, each in a different real state ------ */
+/* ---------- Four synthetic members, each in a different real state ------- */
 export const MEMBERS = {
   '100200300400': {
     uan: '100200300400',
@@ -257,15 +363,17 @@ export const MEMBERS = {
     persona: 'blocked',
     profile: {
       nameOnUan: 'Priya S',
+      parentNameOnUan: 'Ramesh Sundaram',
+      genderOnUan: 'Female',
       dobOnUan: '1994-07-19',
       eNomination: false,
       mobile: '9x xxxx 4417',
       city: 'Chennai, Tamil Nadu'
     },
     kyc: {
-      aadhaar: { seeded: true, name: 'Priya Sundaram', dob: '1994-07-19', mobileLinked: true, masked: 'XXXX XXXX 7712' },
+      aadhaar: { seeded: true, name: 'Priya Sundaram', parentName: 'Ramesh Sundaram', gender: 'Female', dob: '1994-07-19', mobileLinked: true, masked: 'XXXX XXXX 7712' },
       pan:     { seeded: false, masked: null },
-      bank:    { verified: false, holderName: 'Priya Sundaram', masked: 'XXXXXX8890', ifsc: 'HDFC0001234', bankName: 'HDFC Bank, Adyar' }
+      bank:    { verified: false, pendingChange: false, conflictingUanKyc: false, conflictingUans: [], holderName: 'Priya Sundaram', masked: 'XXXXXX8890', ifsc: 'HDFC0001234', bankName: 'HDFC Bank, Adyar' }
     },
     employment: {
       status: 'exited',
@@ -274,6 +382,8 @@ export const MEMBERS = {
       doj: '2022-09-01',
       exitDate: daysAgo(54),
       exitDateMarked: false,
+      exitReasonValid: true,
+      dojMarked: true,
       serviceMonths: 46,
       monthlyWage: 48000,
       untransferredAccounts: 0
@@ -296,15 +406,17 @@ export const MEMBERS = {
     persona: 'ready',
     profile: {
       nameOnUan: 'Rakesh Kumar Meena',
+      parentNameOnUan: 'Mahendra Meena',
+      genderOnUan: 'Male',
       dobOnUan: '1989-11-02',
       eNomination: true,
       mobile: '8x xxxx 9023',
       city: 'Jaipur, Rajasthan'
     },
     kyc: {
-      aadhaar: { seeded: true, name: 'Rakesh Kumar Meena', dob: '1989-11-02', mobileLinked: true, masked: 'XXXX XXXX 3391' },
+      aadhaar: { seeded: true, name: 'Rakesh Kumar Meena', parentName: 'Mahendra Meena', gender: 'Male', dob: '1989-11-02', mobileLinked: true, masked: 'XXXX XXXX 3391' },
       pan:     { seeded: true, masked: 'XXXXX4471X' },
-      bank:    { verified: true, holderName: 'Rakesh Kumar Meena', masked: 'XXXXXX2210', ifsc: 'SBIN0031102', bankName: 'State Bank of India, Malviya Nagar' }
+      bank:    { verified: true, pendingChange: false, conflictingUanKyc: false, conflictingUans: [], holderName: 'Rakesh Kumar Meena', masked: 'XXXXXX2210', ifsc: 'SBIN0031102', bankName: 'State Bank of India, Malviya Nagar' }
     },
     employment: {
       status: 'employed',
@@ -313,6 +425,8 @@ export const MEMBERS = {
       doj: '2016-08-16',
       exitDate: null,
       exitDateMarked: false,
+      exitReasonValid: true,
+      dojMarked: true,
       serviceMonths: 120,
       monthlyWage: 31000,
       untransferredAccounts: 0
@@ -341,15 +455,17 @@ export const MEMBERS = {
     persona: 'rejected',
     profile: {
       nameOnUan: 'Fatima Sheikh',
+      parentNameOnUan: 'Mohammed Shaikh',
+      genderOnUan: 'Male',
       dobOnUan: '1997-01-01',
       eNomination: false,
       mobile: '7x xxxx 1180',
       city: 'Bhiwandi, Maharashtra'
     },
     kyc: {
-      aadhaar: { seeded: true, name: 'Fatima Sheikh', dob: '1997-04-23', mobileLinked: false, masked: 'XXXX XXXX 5028' },
+      aadhaar: { seeded: true, name: 'Fatima Sheikh', parentName: 'Mohammad Sheikh', gender: 'Female', dob: '1997-04-23', mobileLinked: false, masked: 'XXXX XXXX 5028' },
       pan:     { seeded: false, masked: null },
-      bank:    { verified: true, holderName: 'Fatima Sheikh', masked: 'XXXXXX4419', ifsc: 'BARB0BHIWAN', bankName: 'Bank of Baroda, Bhiwandi' }
+      bank:    { verified: true, pendingChange: false, conflictingUanKyc: true, conflictingUans: ['101988745510'], holderName: 'Fatima Sheikh', masked: 'XXXXXX4419', ifsc: 'BARB0BHIWAN', bankName: 'Bank of Baroda, Bhiwandi' }
     },
     employment: {
       status: 'exited',
@@ -358,6 +474,8 @@ export const MEMBERS = {
       doj: '2019-02-11',
       exitDate: daysAgo(130),
       exitDateMarked: true,
+      exitReasonValid: true,
+      dojMarked: true,
       serviceMonths: 86,
       monthlyWage: 19500,
       untransferredAccounts: 1
@@ -379,6 +497,54 @@ export const MEMBERS = {
       rejectedOn: daysAgo(22),
       remark: 'Name not matching as per records; Date of Birth not matching with Aadhaar'
     }]
+  },
+
+  '100200300403': {
+    uan: '100200300403',
+    uanList: ['100200300403'],
+    otp: '123456',
+    persona: 'contract',
+    profile: {
+      nameOnUan: 'Sanjay K Yadav',
+      parentNameOnUan: 'Ramesh Yadav',
+      genderOnUan: 'Male',
+      dobOnUan: '1995-08-14',
+      eNomination: true,
+      mobile: '8x xxxx 6374',
+      city: 'Noida, Uttar Pradesh'
+    },
+    kyc: {
+      aadhaar: { seeded: true, name: 'Sanjay Kumar Yadav', parentName: 'Ramesh Yadav', gender: 'Male', dob: '1995-08-14', mobileLinked: true, masked: 'XXXX XXXX 8836' },
+      pan:     { seeded: true, masked: 'XXXXX7183Q' },
+      bank:    { verified: true, pendingChange: false, conflictingUanKyc: false, conflictingUans: [], holderName: 'Sanjay Kumar Yadav', masked: 'XXXXXX3062', ifsc: 'ICIC0000456', bankName: 'ICICI Bank, Sector 18' }
+    },
+    employment: {
+      status: 'employed',
+      currentEmployer: 'CivicWorks Staffing Solutions Pvt Ltd',
+      lastEmployer: 'CivicWorks Staffing Solutions Pvt Ltd',
+      doj: '2025-04-01',
+      exitDate: null,
+      exitDateMarked: false,
+      exitReasonValid: true,
+      dojMarked: true,
+      serviceMonths: 48,
+      monthlyWage: 22000,
+      untransferredAccounts: 2,
+      employerHistory: [
+        { employer: 'Nandini Facilities Services', period: 'Aug 2022 – Jun 2023', nameOnRecord: 'Sanjay Kumar', transferred: false },
+        { employer: 'Metroline Logistics India Ltd', period: 'Jul 2023 – Mar 2025', nameOnRecord: 'Sanjay Yadav', transferred: false },
+        { employer: 'CivicWorks Staffing Solutions Pvt Ltd', period: 'Apr 2025 – present', nameOnRecord: 'Sanjay K Yadav', transferred: true }
+      ]
+    },
+    passbook: {
+      employeeShare: 118600,
+      employerShare: 84200,
+      pensionShare: 43800,
+      interestYtd: 10940,
+      missingMonths: ['Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025'],
+      entries: seedPassbook('2022-08-01', 48, 22000, ['Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025'])
+    },
+    claims: []
   }
 };
 
