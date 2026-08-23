@@ -329,7 +329,7 @@ export const REJECTION_RULES = [
         'Link Aadhaar to each corrected UAN, then file Form 13 to transfer the old account to the active UAN.',
         'Retry only after the portal accepts the same Aadhaar/KYC on the linked UANs.'
       ],
-      note: 'This is more specific than merely having two UANs: the portal blocks an online claim when the shared KYC carries conflicting demographic records.'
+      note: 'This is more specific than merely having two UANs: the portal blocks an online claim when the shared KYC carries conflicting demographic records. Do this before, or alongside, asking EPFO to merge the UANs — the merge itself fails while the two records still disagree.'
     }
   }
 ];

@@ -111,14 +111,17 @@ p  { margin: 8px 0; color: var(--ink-2); }
 /* "I have done this" is a confirmation, not the primary action on the screen.
    Styling it as an outlined checkbox keeps the fix list from becoming a
    column of identical blue slabs. */
-.btn.check {
-  background: transparent; color: var(--ink-2);
-  border: 1px solid var(--line); font-weight: 600;
+/* The done-toggle sits in the card head rather than on its own row: with a
+   dozen findings that row cost more vertical space than the control was worth. */
+.tick {
+  flex: 0 0 auto; min-width: 44px; min-height: 44px;
+  display: grid; place-items: center; cursor: pointer;
+  background: transparent; border: 1px solid var(--line);
+  border-radius: 10px; color: var(--ink-2); font: inherit; font-size: 1.25rem;
 }
-.btn.check span { font-size: 1.1rem; line-height: 1; }
-.btn.check.on {
-  background: var(--good-bg); color: var(--good); border-color: var(--good);
-}
+.tick.on { background: var(--good-bg); color: var(--good); border-color: var(--good); }
+.finding-head .chip { align-self: center; }
+.finding .tiny .chip { margin-right: 6px; }
 
 .chip {
   display: inline-flex; align-items: center; gap: 6px;

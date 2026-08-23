@@ -193,13 +193,47 @@ function viewHome () {
 function viewReadiness () {
   const s = liveScan();
   const done = fixedSet();
-  const all = s.all;
+
+  /* Group by who can actually act. A flat list of a dozen findings tells a
+     worried person nothing about what to do first, and the three owners work
+     in parallel — so the honest shape of the screen is three short lists,
+     led by the one they can start on today. */
+  const groups = [
+    ['member',   'groupMember',   'groupMemberNote'],
+    ['employer', 'groupEmployer', 'groupEmployerNote'],
+    ['epfo',     'groupEpfo',     'groupEpfoNote']
+  ].map(([owner, head, note]) => {
+    const items = s.all.filter(f => f.owner === owner);
+    const live = items.filter(f => !done.has(f.id));
+    return {
+      owner, head, note, items,
+      blockers: live.filter(f => f.severity === 'blocker').length,
+      warnings: live.filter(f => f.severity === 'warning').length
+    };
+  }).filter(g => g.items.length);
 
   return `
     <h1>${esc(t('readinessHead'))}</h1>
-    ${s.ready ? `<div class="callout good"><b>${esc(t('allClear'))}</b></div>
-       <button class="btn" data-act="nav" data-route="claims">${esc(t('startClaim'))}</button>` : ''}
-    ${all.map(f => findingCard(f, done.has(f.id))).join('')}
+
+    ${s.ready
+      ? `<div class="callout good"><b>${esc(t('allClear'))}</b></div>
+         <button class="btn" data-act="nav" data-route="claims">${esc(t('startClaim'))}</button>`
+      : `<div class="callout info">
+           <b>${esc(t('planHead'))}</b>
+           <p style="margin:6px 0 0">${esc(t('planBody', s.findings.length, s.fixDays))}</p>
+         </div>`}
+
+    ${groups.map(g => `
+      <section>
+        <div class="split" style="margin:22px 0 2px">
+          <h2 style="margin:0">${esc(t(g.head))}</h2>
+          ${g.blockers || g.warnings
+            ? `<span class="chip ${g.blockers ? 'blocker' : 'warning'}">${esc(t('groupCount', g.blockers, g.warnings))}</span>`
+            : `<span class="chip good">${esc(t('markedFixed'))}</span>`}
+        </div>
+        <p class="tiny">${esc(t(g.note))}</p>
+        ${g.items.map(f => findingCard(f, done.has(f.id))).join('')}
+      </section>`).join('')}
   `;
 }
 
@@ -213,11 +247,18 @@ function findingCard (f, isDone) {
     <div class="card finding ${isDone ? 'done' : f.severity}">
       <div class="finding-head">
         <h3>${esc(t('rule.' + f.id))}</h3>
+        <button class="tick ${isDone ? 'on' : ''}" data-act="fix" data-id="${esc(f.id)}"
+                aria-pressed="${isDone}" title="${esc(isDone ? t('markedFixed') : t('markFixed'))}">
+          <span aria-hidden="true">${isDone ? '☑' : '☐'}</span>
+          <span class="sr-only">${esc(isDone ? t('markedFixed') : t('markFixed'))}</span>
+        </button>
+      </div>
+      <p class="tiny">
         <span class="chip ${isDone ? 'good' : f.severity}">
           ${esc(isDone ? t('markedFixed') : f.severity === 'blocker' ? t('blockerLabel') : t('warningLabel'))}
         </span>
-      </div>
-      <p class="tiny">${esc(t(ownerKey))} · ${esc(t('takesAbout', f.etaDays))}</p>
+        ${esc(t('takesAbout', f.etaDays))}
+      </p>
       ${f.detail ? `<p class="muted" style="font-size:.86rem">${esc(t(f.detail[0], ...f.detail.slice(1)))}</p>` : ''}
 
       <button class="disclose" data-act="toggle" data-id="${esc(f.id)}"
@@ -230,14 +271,9 @@ function findingCard (f, isDone) {
         <p class="tiny"><span class="strong">${esc(t('whyItMatters'))}:</span> ${esc(f.fix.note)}</p>
       </div>
 
-      <div class="btnrow" style="margin-top:12px">
-        ${draft ? `<button class="btn secondary sm" data-act="draft" data-id="${esc(f.id)}">${esc(t('draftMessage'))}</button>` : ''}
-        <button class="btn check sm ${isDone ? 'on' : ''}" data-act="fix" data-id="${esc(f.id)}"
-                aria-pressed="${isDone}">
-          <span aria-hidden="true">${isDone ? '☑' : '☐'}</span>
-          ${esc(isDone ? t('markedFixed') : t('markFixed'))}
-        </button>
-      </div>
+      ${draft ? `<div class="btnrow" style="margin-top:10px">
+        <button class="btn secondary sm" data-act="draft" data-id="${esc(f.id)}">${esc(t('draftMessage'))}</button>
+      </div>` : ''}
     </div>`;
 }
 

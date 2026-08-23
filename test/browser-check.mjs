@@ -143,6 +143,7 @@ fh.includes('Name not matching as per records') ? ok('surfaces the raw EPFO rema
 await page.screenshot({ path: `${SHOT}/11-rejected.png`, fullPage: true });
 await click('[data-act="nav"][data-route="readiness"]');
 (await has('You have more than one UAN')) ? ok('detects duplicate UAN') : bad('duplicate UAN not detected');
+(await has('Only EPFO can do these')) ? ok('EPFO-owned group shown when one applies') : bad('EPFO group missing for duplicate UAN');
 await page.screenshot({ path: `${SHOT}/12-rejected-fixes.png`, fullPage: true });
 
 /* ---------- 11. clean persona ---------- */
@@ -176,6 +177,57 @@ const g = await page.locator('#drafttext').inputValue();
 (g.includes('RJ/JPR/0044907/2026') && g.includes('Citizen') && g.includes('Days elapsed: 26'))
   ? ok('grievance draft is pre-filled and cites the charter') : bad('grievance draft wrong: ' + g.slice(0,150));
 await page.screenshot({ path: `${SHOT}/15-grievance.png`, fullPage: true });
+
+/* ---------- 11b. fourth persona: informal-sector worker ---------- */
+await click('[data-act="nav"][data-route="help"]');
+await click('[data-act="logout"]');
+await click('[data-act="demo"][data-uan="100200300403"]');
+(await has('Namaste')) ? ok('fourth persona signs in') : bad('fourth persona login failed');
+await click('[data-act="nav"][data-route="readiness"]');
+const cw = await txt();
+for (const r of ['Your name does not match your Aadhaar',
+                 'An old PF account was never transferred',
+                 'Your employer skipped some months'])
+  cw.includes(r) ? ok('contract worker: ' + r) : bad('contract worker missing: ' + r);
+/* grouping by owner is the point of the screen - all three headings must be real */
+for (const g of ['Start here', 'Only your employer can do these'])
+  cw.includes(g) ? ok('fix list grouped: ' + g) : bad('missing group: ' + g);
+/* this persona has no EPFO-owned finding, so that group must NOT be rendered */
+!cw.includes('Only EPFO can do these') ? ok('empty owner group is hidden') : bad('empty EPFO group rendered');
+cw.includes('run in parallel') ? ok('plan explains parallel fixes') : bad('no parallel-fix explanation');
+await page.screenshot({ path: `${SHOT}/16-contract-worker.png`, fullPage: true });
+
+/* ---------- 11c. the six Codex-added rules render in both languages ---------- */
+const newRules = ['PARENT_NAME_MISMATCH','GENDER_MISMATCH','DATE_OF_JOINING_MISSING',
+                  'EXIT_REASON_INVALID','BANK_KYC_CHANGE_PENDING','KYC_CONFLICT_ACROSS_UANS'];
+const ruleAudit = await page.evaluate(async ids => {
+  const D = await import('./assets/data.js');
+  const I = await import('./assets/i18n.js');
+  const en = I.makeT('en'), hi = I.makeT('hi');
+  const out = { missing: [], unlabelled: [], noSteps: [] };
+  for (const id of ids) {
+    const r = D.REJECTION_RULES.find(x => x.id === id);
+    if (!r) { out.missing.push(id); continue; }
+    if (en('rule.' + id) === 'rule.' + id || hi('rule.' + id) === 'rule.' + id) out.unlabelled.push(id);
+    if (!r.fix?.steps?.length || !r.fix?.note) out.noSteps.push(id);
+  }
+  return out;
+}, newRules);
+!ruleAudit.missing.length   ? ok('all six new rules present') : bad('missing rules: ' + ruleAudit.missing);
+!ruleAudit.unlabelled.length? ok('all six labelled in EN and HI') : bad('unlabelled: ' + ruleAudit.unlabelled);
+!ruleAudit.noSteps.length   ? ok('all six carry fix steps and a note') : bad('no fix steps: ' + ruleAudit.noSteps);
+
+/* ---------- 11d. bilingual drafts ---------- */
+await click('[data-act="draft"][data-id="CONTRIBUTION_GAP"]');
+const enDraft = await page.locator('#drafttext').inputValue();
+await click('[data-act="draftlang"][data-lang="hi"]');
+const hiDraft = await page.locator('#drafttext').inputValue();
+/[\u0900-\u097F]/.test(hiDraft) ? ok('draft switches to Hindi') : bad('Hindi draft not produced');
+(hiDraft !== enDraft && hiDraft.includes('UAN')) ? ok('Hindi draft keeps the UAN reference') : bad('Hindi draft malformed');
+await click('[data-act="draftlang"][data-lang="en"]');
+(await page.locator('#drafttext').inputValue()) === enDraft ? ok('draft toggles back to English') : bad('English draft not restored');
+await page.screenshot({ path: `${SHOT}/17-hindi-draft.png`, fullPage: true });
+await click('[data-act="back"]');
 
 /* ---------- 12. a11y-ish + offline ---------- */
 const noAlt = await page.locator('img:not([alt])').count();

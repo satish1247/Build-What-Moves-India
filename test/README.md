@@ -10,7 +10,7 @@ npm install playwright
 node test/browser-check.mjs
 ```
 
-46 checks. It is not decoration: writing it caught three real defects during the build —
+61 checks, covering all four personas, the 18-rule taxonomy, owner grouping and the bilingual drafts. It is not decoration: writing it caught three real defects during the build —
 a mark-done control buried inside a collapsed section, a navigation dead end that stranded
 users on the readiness screen once they were ready, and a label that read
 "Needs 0 more years of service".

@@ -95,6 +95,18 @@ export const STRINGS = {
       kycUanConflict: uans => `The same bank KYC is also linked to UAN: ${uans}, with conflicting details.`
     },
 
+    /* --- fix list grouping --- */
+    groupMember:   'Start here — you can fix these yourself',
+    groupEmployer: 'Only your employer can do these',
+    groupEpfo:     'Only EPFO can do these',
+    groupMemberNote:   'Nothing is stopping you from starting these today.',
+    groupEmployerNote: 'You cannot fix these from your side. Send the letter, then follow up.',
+    groupEpfoNote:     'Raise these with your PF office and keep the reference number.',
+    groupCount: (b, w) => b && w ? `${b} blocking, ${w} costly`
+                                 : b ? `${b} blocking` : `${w} costly`,
+    planHead: 'Your plan',
+    planBody: (n, d) => `${n} thing${n === 1 ? '' : 's'} to sort out. They run in parallel, so it is about ${d} days from the day you start — not ${n} separate waits.`,
+
     /* --- rule names --- */
     rule: {
       AADHAAR_NOT_SEEDED:    'Aadhaar is not linked to your UAN',
@@ -345,6 +357,17 @@ export const STRINGS = {
       pendingBankKyc: establishment => `बैंक KYC में बदलाव अभी भी ${establishment} की स्वीकृति का इंतज़ार कर रहा है।`,
       kycUanConflict: uans => `यही बैंक KYC अलग विवरण वाले UAN ${uans} से भी जुड़ा है।`
     },
+
+    groupMember:   'यहाँ से शुरू करें — ये आप ख़ुद ठीक कर सकते हैं',
+    groupEmployer: 'ये सिर्फ़ आपका नियोक्ता कर सकता है',
+    groupEpfo:     'ये सिर्फ़ EPFO कर सकता है',
+    groupMemberNote:   'इन्हें आज ही शुरू करने से कोई नहीं रोक रहा।',
+    groupEmployerNote: 'ये आपकी तरफ़ से ठीक नहीं हो सकते। पत्र भेजें, फिर याद दिलाते रहें।',
+    groupEpfoNote:     'इन्हें अपने PF कार्यालय में उठाएँ और संदर्भ संख्या सँभालकर रखें।',
+    groupCount: (b, w) => b && w ? `${b} रुकावट, ${w} नुक़सान`
+                                 : b ? `${b} रुकावट` : `${w} नुक़सान`,
+    planHead: 'आपकी योजना',
+    planBody: (n, d) => `${n} चीज़ें सुलझानी हैं। ये साथ-साथ चलती हैं, इसलिए शुरू करने के दिन से लगभग ${d} दिन लगेंगे — ${n} अलग-अलग इंतज़ार नहीं।`,
 
     rule: {
       AADHAAR_NOT_SEEDED:    'आधार आपके UAN से नहीं जुड़ा है',

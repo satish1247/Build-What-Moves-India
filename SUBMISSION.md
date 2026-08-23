@@ -37,15 +37,22 @@ device.
 
 ## How Codex contributed
 
-*Required by the rules. Fill this in truthfully after your Codex pass — see
-`docs/CODEX_SESSION.md`. Name the specific files and features it produced.*
+Codex extended the core of this build — the rejection taxonomy that decides whether a claim
+would be rejected.
 
-> `[e.g. "I used Codex to research and extend the rejection taxonomy in assets/data.js from
-> 12 rules to 19, including the matching bilingual strings in assets/i18n.js, and to add a
-> fourth persona covering informal-sector workers with fragmented service history. Codex also
-> ran the browser check suite and fixed the failures it surfaced."]`
+- **Six new pre-check rules** in `assets/data.js`, taking the taxonomy from 12 to 18:
+  `PARENT_NAME_MISMATCH`, `GENDER_MISMATCH`, `DATE_OF_JOINING_MISSING`, `EXIT_REASON_INVALID`,
+  `BANK_KYC_CHANGE_PENDING` and `KYC_CONFLICT_ACROSS_UANS`. Each carries an owner, a realistic
+  fix time, EPFO's own rejection wording, a test, and repair steps. Codex grounded the wording
+  in EPFO's published member FAQ and its claim-settlement SOP.
+- **Bilingual strings** for all of it in `assets/i18n.js`, keeping English/Hindi key parity.
+- **A fourth persona** (`100200300403`): a contract worker across three employers, each
+  recording a different name, with two untransferred accounts and six consecutive months of
+  missing employer deposits.
+- **Hindi versions of the generated letters and grievance** in `assets/engine.js`, with a
+  language toggle on the draft screen — closing a limitation the app had previously disclosed.
 
----
+Every change was verified against the project's existing browser suite before it was accepted.
 
 ## Two-minute video script
 

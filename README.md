@@ -50,7 +50,7 @@ Three things make it more than a form checker:
 | Step | What happens |
 |---|---|
 | Sign in | Mock UAN + OTP |
-| Readiness scan | 12 rejection rules run; score out of 100; blockers ranked worst-first |
+| Readiness scan | 18 rejection rules run; score out of 100; findings grouped by who can act — you, your employer, EPFO |
 | Fix | Exact steps per finding, who owns it, how long it takes; tick items off and watch the score climb |
 | Draft | Generated letters for employer-owned and EPFO-owned blockers |
 | Understand the money | Passbook in plain language, with months the employer never deposited flagged in red |
@@ -68,12 +68,13 @@ Open the live link and use any demo login. **OTP for all accounts: `123456`.**
 |---|---|---|
 | `100200300400` | Priya | Would be rejected today. 3 blockers, and ₹47,200 of avoidable tax. |
 | `100200300401` | Rakesh | Clean record — but EPFO is 6 days late, so the grievance path opens. |
-| `100200300402` | Fatima | Already rejected once. Duplicate UAN and a DOB mismatch to unpick. |
+| `100200300402` | Fatima | Already rejected once. Duplicate UAN, DOB and gender mismatches to unpick. |
+| `100200300403` | Contract worker | Three employers in four years, each recording a different name. Two untransferred accounts, six months of missing deposits. |
 
 ## Designed for who actually uses this
 
 - **Mobile-first**, 390px up. Large touch targets, high contrast, visible focus rings.
-- **English and हिंदी** across every screen, including the generated findings.
+- **English and हिंदी** across every screen, including the generated findings and the letters.
 - **Larger-text mode** and **read-aloud** for members with low vision or low literacy.
 - **No images and no web fonts anywhere.** The whole app is under 100KB (31KB gzipped), so it opens on 2G.
 - **Works fully offline** after first load via a service worker — the state many members
@@ -93,7 +94,7 @@ no backend and no connection of any kind to EPFO — signing in matches a number
 local file. Progress is saved only in your own browser.
 
 **Simplified, and we say so in the app:** the EPS Table D figure and the advance caps are
-approximations, not a substitute for EPFO's calculation. Generated letters are English-only.
+approximations, not a substitute for EPFO's calculation.
 
 ## How this would work at real scale
 
@@ -123,9 +124,9 @@ the file directly.
 
 ```
 index.html            shell
-assets/data.js        rejection taxonomy + synthetic members   (the substance)
+assets/data.js        18-rule rejection taxonomy + 4 synthetic members  (the substance)
 assets/engine.js      scan, eligibility, forecast, TDS, charter clock, drafts (pure functions)
-assets/i18n.js        English + Hindi, 185 keys, full parity
+assets/i18n.js        English + Hindi, 208 keys, full parity
 assets/app.js         views and events
 assets/styles.css     mobile-first, light + dark
 sw.js                 offline shell cache
