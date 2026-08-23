@@ -35,6 +35,18 @@ device.
 
 ---
 
+## How Codex contributed
+
+*Required by the rules. Fill this in truthfully after your Codex pass — see
+`docs/CODEX_SESSION.md`. Name the specific files and features it produced.*
+
+> `[e.g. "I used Codex to research and extend the rejection taxonomy in assets/data.js from
+> 12 rules to 19, including the matching bilingual strings in assets/i18n.js, and to add a
+> fourth persona covering informal-sector workers with fragmented service history. Codex also
+> ran the browser check suite and fixed the failures it surfaced."]`
+
+---
+
 ## Two-minute video script
 
 ### Minute one — using it as a citizen (0:00–1:00)
