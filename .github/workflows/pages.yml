@@ -1,4 +1,8 @@
-name: Deploy to GitHub Pages
+name: Publish to gh-pages
+
+# Pages is served from the gh-pages branch, so this rebuilds that branch from
+# the app files on every push. It uses only contents:write, which the Actions
+# token does get — unlike creating a Pages site, which needs repo-admin.
 
 on:
   push:
@@ -6,43 +10,31 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
-# Never run two deploys at once, but let a queued one finish rather than
-# cancelling it — a half-published site is worse than a slightly stale one.
 concurrency:
-  group: pages
+  group: gh-pages
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
-      # Note: enablement:true is deliberately NOT set. The Actions token cannot
-      # create a Pages site (needs repo-admin), so it only hard-fails the run.
-      # Pages is switched on once in Settings; after that this deploys on push.
-      - uses: actions/configure-pages@v5
-
-      # Publish only what the app needs. The README, submission pack and test
-      # harness stay in the repo for anyone reading it, but are not served.
-      - name: Assemble site
+      - name: Assemble and publish the site
         run: |
+          set -euo pipefail
           mkdir -p _site
           cp -r index.html manifest.webmanifest sw.js assets .nojekyll _site/
           echo "--- publishing ---"
           find _site -type f | sort
-          du -sh _site
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          cd _site
+          git init -q -b gh-pages
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Publish ${GITHUB_SHA:0:7}"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
