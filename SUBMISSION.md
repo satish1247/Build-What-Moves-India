@@ -2,7 +2,7 @@
 
 Fill in the two bracketed fields before submitting.
 
-- **Live link:** `[paste your deployed URL]`
+- **Live link:** https://satish1247.github.io/Build-What-Moves-India/  ← confirm this opens in a private window before submitting
 - **Video link:** `[paste your Loom / YouTube unlisted link]`
 - **Demo credentials:** UAN `100200300400`, `100200300401` or `100200300402` — OTP `123456` for all three
 - **Partner's registered email:** `[partner's email, or leave blank if solo]`

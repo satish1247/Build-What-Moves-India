@@ -62,7 +62,9 @@ Three things make it more than a form checker:
 
 ## Try it
 
-Open the live link and use any demo login. **OTP for all accounts: `123456`.**
+**Live: https://satish1247.github.io/Build-What-Moves-India/**
+
+Use any demo login. **OTP for all accounts: `123456`.**
 
 | UAN | Who | What it shows |
 |---|---|---|
