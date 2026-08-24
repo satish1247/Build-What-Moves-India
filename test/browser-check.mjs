@@ -50,6 +50,20 @@ await click('[data-act="login"]');
 await page.fill('#otp', '123456');
 await click('[data-act="login"]');
 (await has('Namaste, Priya')) ? ok('real login works') : bad('login failed');
+await click('[data-act="nav"][data-route="help"]');
+await click('[data-act="logout"]');
+
+/* ---------- 1b. the before/after comparison a reviewer sees first ---------- */
+await click('[data-act="nav"][data-route="compare"]');
+const cmp = await txt();
+(await page.locator('.compare').count()) >= 10 ? ok('comparison lists the full journey') : bad('comparison too short');
+/on the portal today/i.test(cmp) ? ok('shows the current portal column') : bad('no current-portal column');
+cmp.includes('1.74 crore') ? ok('comparison states the outcome') : bad('no outcome stated');
+cmp.includes('No screenshots, logos or code') ? ok('discloses no EPFO assets were used') : bad('missing asset disclosure');
+await page.screenshot({ path: `${SHOT}/18-compare.png`, fullPage: true });
+await click('[data-act="back"]');
+(await has('Check your PF claim')) ? ok('back returns to sign-in') : bad('back from comparison broken');
+await click('[data-act="demo"][data-uan="100200300400"]');
 
 /* ---------- 2. home, blocked persona ---------- */
 const home = await txt();

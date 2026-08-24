@@ -272,3 +272,20 @@ ol.steps li { margin: 7px 0; color: var(--ink-2); font-size: .92rem; }
 footer { padding: 24px 0 12px; text-align: center; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ---------- before / after comparison ---------- */
+.compare h3 { margin-bottom: 10px; }
+.cmp { display: grid; gap: 10px; }
+@media (min-width: 560px) { .cmp { grid-template-columns: 1fr 1fr; } }
+.cmp > div { border-radius: 10px; padding: 10px 12px; }
+.cmp-then { background: var(--danger-bg); }
+.cmp-now  { background: var(--good-bg); }
+.cmp p { margin: 4px 0 0; font-size: .88rem; color: var(--ink-2); }
+.cmp-then p { color: var(--danger); }
+.cmp-now  p { color: var(--good); }
+.cmp-label {
+  font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; opacity: .8;
+}
+.cmp-then .cmp-label { color: var(--danger); }
+.cmp-now  .cmp-label { color: var(--good); }

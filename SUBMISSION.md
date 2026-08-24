@@ -9,29 +9,32 @@ Fill in the two bracketed fields before submitting.
 
 ---
 
-## Project summary (238 words)
+## Project summary (232 words)
 
-In FY 2024-25, EPF members filed about 796 lakh claims and roughly 174 lakh were rejected —
-a 22% rejection rate, with a five-year average near 26%. That is on the order of 1.74 crore
-people refused access to their own savings in one year.
+We rebuilt the EPFO member portal's withdrawal journey — the one about 30 crore
+subscribers use to get their own provident fund out.
 
-The causes are not mysterious. Names that differ from Aadhaar by one character, unverified
-bank accounts, an exit date the previous employer never marked, duplicate UANs. All of it is
-knowable before the member clicks submit. But EPFO validates after filing, so members file
-blind, wait three weeks, receive a one-line remark like "Name not matching as per records",
-and often re-file the same broken claim.
+In FY 2024-25 members filed roughly 796 lakh claims and about 174 lakh were
+rejected: a 22% rejection rate, five-year average near 26%. On the order of 1.74
+crore people refused access to their own savings in one year.
 
-Nikaas inverts that order. It scans the member's record against the rejection taxonomy
-before filing and answers one question: would this be rejected, and what do I fix first?
+The portal's real defect is not that it looks dated. It is that it accepts a claim
+it already knows will fail. Names differing from Aadhaar by one character,
+unverified bank accounts, an exit date the previous employer never marked — all
+knowable before submit. But EPFO validates after filing, so members wait three
+weeks, get a one-line remark like "Name not matching as per records", and often
+re-file the same broken claim.
 
-Three things make it more than a form checker. It assigns ownership, telling you whether
-you, your employer, or EPFO must fix each blocker — the piece members never get. It ends in
-a document rather than advice, generating the exit-date request, the non-deposit complaint,
-the pre-filled grievance. And it runs EPFO's own 20-day Citizen's Charter clock, reframing a
-late claim as a grievance and writing it for you.
+So we moved the check to before the claim instead of after it. An 18-rule scan
+runs first and answers one question: would this be rejected, and what do I fix?
 
-It is bilingual, readable aloud, under 100KB, and works fully offline. Nothing leaves the
-device.
+Three things make it more than a form checker. It says whether you, your employer,
+or EPFO must fix each blocker — the piece members never get. It ends in a
+document, not advice: the exit-date request, the non-deposit complaint, the
+pre-filled grievance. And it runs EPFO's own 20-day Citizen's Charter clock,
+reframing a late claim as a grievance and writing it.
+
+Bilingual, readable aloud, under 100KB, works offline.
 
 ---
 
@@ -61,20 +64,23 @@ Every change was verified against the project's existing browser suite before it
 **0:00** — "In one year, EPFO rejected about 1.74 crore claims. Not fraud. Spelling
 mistakes." *(open the live link on a phone-width window)*
 
-**0:08** — Sign in as Priya, UAN `100200300400`, OTP `123456`.
+**0:06** — Tap **See what we changed**, scroll two rows. "This is the EPFO
+withdrawal journey today, and rebuilt. Same job, twelve steps compared."
 
-**0:14** — "Priya has ₹4,72,000 sitting in her PF. Her readiness score is 19 out of 100. If
+**0:12** — Sign in as Priya, UAN `100200300400`, OTP `123456`.
+
+**0:18** — "Priya has ₹4,72,000 sitting in her PF. Her readiness score is 19 out of 100. If
 she filed today, she would be rejected — and she would only find that out in three weeks."
 
-**0:24** — Tap **See what to fix**. "Three things will reject her. And notice who owns each
+**0:26** — Tap **See what to fix**. "Three things will reject her. And notice who owns each
 one: her name mismatch is hers to fix, but the missing exit date is her ex-employer's. No
 amount of re-filing will fix that."
 
-**0:38** — Expand the name mismatch. "It shows the exact difference: her UAN says Priya S,
+**0:40** — Expand the name mismatch. "It shows the exact difference: her UAN says Priya S,
 her Aadhaar says Priya Sundaram. That single missing surname is the most common rejection
 reason in the country."
 
-**0:48** — Tap **Draft the message for me** on the employer blocker. "It writes the letter.
+**0:50** — Tap **Draft the message for me** on the employer blocker. "It writes the letter.
 She sends it. This is the whole product philosophy — every dead end ends in a document, not
 in advice."
 

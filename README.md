@@ -1,6 +1,11 @@
-# Nikaas — check your PF claim before you file it
+# Nikaas — the EPFO member portal, rebuilt
 
 **An independent hackathon prototype for Build What Moves India.**
+
+**The service:** the EPFO member portal at epfindia.gov.in — specifically the
+journey 30 crore subscribers use to withdraw their own provident fund.
+**What we changed:** see [What we changed](#what-we-changed), or open the
+comparison inside the app.
 Not affiliated with, endorsed by, or connected to EPFO or the Government of India.
 Every member record, balance and claim number in this build is synthetic.
 
@@ -25,6 +30,18 @@ Every one of those is **knowable before the member clicks submit**. But EPFO val
 *after* filing. So the member files blind, waits three weeks, receives a one-line remark
 like *"Name not matching as per records"*, does not know who is supposed to fix it, and
 very often re-files the identical broken claim.
+
+## What we changed
+
+The portal's problem is not that it looks dated. It is that **it lets you submit
+a claim it already knows will fail**, then tells you three weeks later in one
+cryptic line, without saying who is supposed to fix it.
+
+The app carries a full before/after comparison of the withdrawal journey, step by
+step — finding the page, signing in, knowing if you are ready, knowing what is
+wrong, knowing who fixes it, choosing the claim, knowing what you get, knowing how
+long, waiting, being kept waiting, being rejected. Open **See what we changed** on
+the sign-in screen.
 
 ## The idea
 

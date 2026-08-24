@@ -113,6 +113,7 @@ function viewLogin () {
   return `
     <h1>${esc(t('loginTitle'))}</h1>
     <p class="lede">${esc(t('loginSub'))}</p>
+    <button class="btn secondary" data-act="nav" data-route="compare">${esc(t('compareLink'))}</button>
 
     <div class="card">
       <label for="uan">${esc(t('uanLabel'))}</label>
@@ -475,6 +476,37 @@ function claimCard (c) {
     </div>`;
 }
 
+function viewCompare () {
+  const steps = t('compareSteps') || [];
+  return `
+    <button class="btn ghost" data-act="back">← ${esc(t('back'))}</button>
+    <h1>${esc(t('compareHead'))}</h1>
+    <p class="lede">${esc(t('compareSub'))}</p>
+
+    ${steps.map(([step, today, ours]) => `
+      <div class="card compare">
+        <h3>${esc(step)}</h3>
+        <div class="cmp">
+          <div class="cmp-then">
+            <span class="cmp-label">${esc(t('compareToday'))}</span>
+            <p>${esc(today)}</p>
+          </div>
+          <div class="cmp-now">
+            <span class="cmp-label">${esc(t('compareOurs'))}</span>
+            <p>${esc(ours)}</p>
+          </div>
+        </div>
+      </div>`).join('')}
+
+    <div class="card">
+      <h3>${esc(t('compareOutcomeHead'))}</h3>
+      <p>${esc(t('compareOutcome'))}</p>
+    </div>
+
+    <p class="tiny">${esc(t('compareHonest'))}</p>
+  `;
+}
+
 function viewHelp () {
   return `
     <h1>${esc(t('helpHead'))}</h1>
@@ -487,6 +519,12 @@ function viewHelp () {
     <div class="card">
       <h3>${esc(t('scaleHead'))}</h3>
       <ul>${t('scaleBody').map(x => `<li class="muted" style="margin:8px 0;font-size:.9rem">${esc(x)}</li>`).join('')}</ul>
+    </div>
+
+    <div class="card">
+      <h3>${esc(t('compareHead'))}</h3>
+      <p class="muted" style="font-size:.9rem">${esc(t('compareSub'))}</p>
+      <button class="btn secondary" data-act="nav" data-route="compare">${esc(t('compareLink'))}</button>
     </div>
 
     <div class="card">
@@ -540,6 +578,7 @@ function render () {
     case 'file':      body = viewFile(); break;
     case 'help':      body = viewHelp(); break;
     case 'draft':     body = viewDraft(); break;
+    case 'compare':   body = viewCompare(); break;
     default:          body = viewLogin();
   }
 
@@ -555,7 +594,7 @@ function render () {
     <div class="ribbon">${esc(t('disclaimerShort'))}</div>
     <header class="topbar">
       <div class="topbar-in">
-        <div class="brand">${esc(t('appName'))}<small>${esc(t('tagline'))}</small></div>
+        <div class="brand">${esc(t('appName'))}<small>${esc(t('rebuiltOf'))}</small></div>
         <button class="iconbtn" data-act="lang">${esc(t('langToggle'))}</button>
         <button class="iconbtn" data-act="bigtext" aria-pressed="${state.bigText}" title="${esc(t('bigText'))}">A+</button>
         ${signedIn ? `<button class="iconbtn" data-act="speak" aria-pressed="${speaking}">${speaking ? '■' : '▶'}</button>` : ''}
@@ -586,7 +625,7 @@ document.addEventListener('click', ev => {
   if (act === 'bigtext') { state.bigText = !state.bigText; save(); return render(); }
   if (act === 'speak') return readAloud();
   if (act === 'nav') return go(el.dataset.route, el.dataset.param || null);
-  if (act === 'back') return go(state.param?.from || 'home');
+  if (act === 'back') return go(state.param?.from || (member() ? 'home' : 'login'));
 
   if (act === 'demo') {
     state.uan = el.dataset.uan;
