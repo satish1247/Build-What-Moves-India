@@ -59,58 +59,8 @@ Every change was verified against the project's existing browser suite before it
 
 ## Two-minute video script
 
-### Minute one — using it as a citizen (0:00–1:00)
-
-**0:00** — "In one year, EPFO rejected about 1.74 crore claims. Not fraud. Spelling
-mistakes." *(open the live link on a phone-width window)*
-
-**0:06** — Tap **See what we changed**, scroll two rows. "This is the EPFO
-withdrawal journey today, and rebuilt. Same job, twelve steps compared."
-
-**0:12** — Sign in as Priya, UAN `100200300400`, OTP `123456`.
-
-**0:18** — "Priya has ₹4,72,000 sitting in her PF. Her readiness score is 19 out of 100. If
-she filed today, she would be rejected — and she would only find that out in three weeks."
-
-**0:26** — Tap **See what to fix**. "Three things will reject her. And notice who owns each
-one: her name mismatch is hers to fix, but the missing exit date is her ex-employer's. No
-amount of re-filing will fix that."
-
-**0:40** — Expand the name mismatch. "It shows the exact difference: her UAN says Priya S,
-her Aadhaar says Priya Sundaram. That single missing surname is the most common rejection
-reason in the country."
-
-**0:50** — Tap **Draft the message for me** on the employer blocker. "It writes the letter.
-She sends it. This is the whole product philosophy — every dead end ends in a document, not
-in advice."
-
-**0:56** — Tick the three blockers. Score climbs to 85, then green. "Now she can file."
-
-### Minute two — how it was built and why (1:00–2:00)
-
-**1:00** — "The core is a rejection taxonomy — twelve rules, each with severity, an owner,
-a realistic fix time, and EPFO's own rejection wording."
-
-**1:10** — Show `engine.js`. "The engine is pure functions. No DOM, no network. That was
-deliberate: this is the part you would point at a real read-only EPFO API, and it is
-testable on its own. I drove the whole app in a headless browser — 46 checks — and it caught
-three real bugs, including one that told users 'needs 0 more years of service'."
-
-**1:26** — Show the money screen. "Two months where her employer deducted PF and never
-deposited it. Members almost never notice. That money is recoverable."
-
-**1:34** — Switch to Rakesh. "Clean record, and EPFO is still six days past its own 20-day
-Citizen's Charter. So the product stops waiting and writes the grievance." *(tap Draft my
-grievance)*
-
-**1:44** — Toggle हिंदी, then A+. "Bilingual throughout, read-aloud, 31KB gzipped with no images
-or web fonts, and it works fully offline — because that is the connection people actually have."
-
-**1:52** — "Every limitation is disclosed in the app itself. And the strongest version of
-this isn't an app at all — it's this check running inside the EPFO portal, refusing to
-accept a claim that is certain to fail."
-
----
+The full shot-by-shot script, with timings and the verified on-screen numbers, is in
+[`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md).
 
 ## Judging criteria, mapped
 
