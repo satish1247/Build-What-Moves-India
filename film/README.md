@@ -9,6 +9,18 @@ python3 -m http.server 8145 &
 node render.mjs        # writes ./out/*.webm
 ```
 
+Playwright records webm. For MP4, Playwright's bundled ffmpeg is a stripped build
+with VP8 only, so use a full one:
+
+```bash
+pip install imageio-ffmpeg
+FF=$(python3 -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())")
+"$FF" -i out/*.webm -c:v libx264 -preset slow -crf 19 \
+      -pix_fmt yuv420p -movflags +faststart nikaas-film.mp4
+```
+
+The same conversion works for `test/record-demo.mjs` output.
+
 `film.html` is the composition — twelve scenes, timing in the `TL` array at the
 bottom, in seconds. `assets/` holds cropped app captures.
 
