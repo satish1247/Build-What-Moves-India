@@ -20,6 +20,23 @@ does not appear on screen.
 
 ---
 
+## Screen footage
+
+`test/record-demo.mjs` records the whole click path against the live app and writes a
+silent ~1:37 webm you can narrate over, or just watch and copy:
+
+```bash
+python3 -m http.server 8123 &
+npm install playwright
+node test/record-demo.mjs
+```
+
+It draws a visible cursor so every tap is obvious. Re-run it after any change and the
+footage matches the build again. It is a recording of the real product — the reviewers
+need to see your app working, so do not replace it with generated video.
+
+---
+
 ## Minute one — using it as a citizen
 
 **0:00** *(comparison screen open)*
