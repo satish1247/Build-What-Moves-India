@@ -80,4 +80,4 @@ The full shot-by-shot script, with timings and the verified on-screen numbers, i
 - [ ] Record the video (2:00 maximum)
 - [ ] Confirm the summary is under 250 words
 - [ ] Both teammates registered, each entering the other's registered email
-- [ ] Submit before **28 August 2026, 8:00 PM IST** — no grace period
+- [ ] Submit before **29 August 2026, 10:00 PM IST** — no grace period
